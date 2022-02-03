@@ -2,6 +2,9 @@ const cart = document.querySelector('.cart__items');
 const totalPrice = document.querySelector('.total-price');
 const button = document.querySelector('.empty-cart');
 const load = document.querySelector('.loading');
+const seachInput = document.querySelector('#inputText');
+const searchBtn = document.querySelector('#searchbtn');
+const items = document.querySelector('.items')
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -112,21 +115,35 @@ const addItems = (items) => {
     const section = document.querySelector('.items');
     section.appendChild(itemHTML);
   });
-  load.remove(alert('mensagem apagada'));
+  // load.remove(alert('mensagem apagada'));
 };
 
 // refatorado com ajuda do Rogério.
 const getProductPromise = async (product = 'computador') => {
   try {
-  const promise = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${product}`);
-  const data = await promise.json();
-  const result = data.results;
-  addItems(result);
+    const promise = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${product}`);
+    const data = await promise.json();
+    const result = data.results;
+    addItems(result);
   } catch (erro) {
-  alert(erro);
+    alert(erro);
   }
 };
 // fim do desafio 1
+
+searchBtn.addEventListener('click', async () => {
+items.innerHTML = '';
+const item = seachInput.value;
+await getProductPromise(item);
+seachInput.value = '';
+});
+
+seachInput.addEventListener('keypress', (e) => {
+  if (e.keyCode === 13 && seachInput.value !== '') {
+    e.preventDefault();
+    searchBtn.click();
+  }
+})
 
 cart.addEventListener('click', cartItemClickListener);
 
